@@ -124,8 +124,8 @@ public class Autoimplement<T>
 			.mapToDouble(Entry::getValue)
 			.sum();
 		
-		int thresholdFitness = random.nextInt((int) totalFitness + 1);
-		int cumulativeFitness = 0;
+		double thresholdFitness = random.nextInt((int) totalFitness + 1);
+		double cumulativeFitness = 0;
 		
 		for (Entry<Expression, Double> entry : populationAndFitness)
 		{
