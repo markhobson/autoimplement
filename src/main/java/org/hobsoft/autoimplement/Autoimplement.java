@@ -24,6 +24,7 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 import com.github.javaparser.ast.expr.Expression;
 
+import static java.util.Comparator.comparingDouble;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -61,16 +62,25 @@ public class Autoimplement<T>
 		
 		while (!winner.isPresent() && generation < MAX_GENERATIONS)
 		{
-			System.out.format("Generation #%d%n", generation + 1);
-			
 			List<Entry<Expression, Double>> populationAndFitness = population.stream()
 				.map(individual -> new SimpleEntry<>(individual, fitness(individual)))
 				.collect(toList());
 			
-			winner = findWinner(populationAndFitness);
+			Entry<Expression, Double> fittest = populationAndFitness.stream()
+				.max(comparingDouble(Entry::getValue))
+				.orElseThrow(() -> new IllegalStateException("Empty population"));
 			
-			population = evolve(populationAndFitness);
-			generation++;
+			System.out.format("Generation #%d: %s%n", generation + 1, fittest.getKey());
+			
+			if (fittest.getValue() >= TARGET_FITNESS)
+			{
+				winner = Optional.of(fittest.getKey());
+			}
+			else
+			{
+				population = evolve(populationAndFitness);
+				generation++;
+			}
 		}
 		
 		return winner;
@@ -89,15 +99,6 @@ public class Autoimplement<T>
 		TestExecutionSummary summary = testRunner.run(implementation);
 		
 		return (double) summary.getTestsSucceededCount() / summary.getTestsFoundCount();
-	}
-	
-	private static Optional<Expression> findWinner(List<Entry<Expression, Double>> populationAndFitness)
-	{
-		return populationAndFitness
-			.stream()
-			.filter(entry -> entry.getValue() >= TARGET_FITNESS)
-			.map(Entry::getKey)
-			.findFirst();
 	}
 	
 	private List<Expression> evolve(List<Entry<Expression, Double>> populationAndFitness)
