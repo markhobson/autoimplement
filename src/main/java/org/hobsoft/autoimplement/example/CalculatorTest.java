@@ -26,8 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CalculatorTest
 {
 	@Test
-	public void canAddNumbers(Calculator calculator)
+	public void canCalculate2Plus2(Calculator calculator)
 	{
 		assertEquals(4, calculator.add(2, 2));
+	}
+
+	@Test
+	public void canCalculate4Plus6(Calculator calculator)
+	{
+		assertEquals(10, calculator.add(4, 6));
 	}
 }
