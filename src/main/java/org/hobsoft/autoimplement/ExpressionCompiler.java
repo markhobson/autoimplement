@@ -25,29 +25,11 @@ public class ExpressionCompiler<T>
 		implCount = 0;
 	}
 	
-	public T compile(Expression expression)
-	{
-		String name = String.format("CalculatorImpl%d", implCount++);
-		return compile(createImplementationUnit(name, expression));
-	}
-	
-	private T compile(CompilationUnit unit)
-	{
-		String name = unit.getTypes()
-			.stream()
-			.findFirst()
-			.map(NodeWithSimpleName::getNameAsString)
-			.orElseThrow(() -> new IllegalArgumentException("Missing type"));
-		
-		return Reflect.compile(name, unit.toString())
-			.create()
-			.get();
-	}
-	
-	private static CompilationUnit createImplementationUnit(String name, Expression expression)
+	public CompilationUnit source(Expression expression)
 	{
 		CompilationUnit unit = new CompilationUnit();
 		
+		String name = String.format("CalculatorImpl%d", implCount++);
 		ClassOrInterfaceDeclaration type = unit.addClass(name);
 		type.addImplementedType(Calculator.class);
 		
@@ -61,5 +43,23 @@ public class ExpressionCompiler<T>
 		method.setBody(body);
 		
 		return unit;
+	}
+
+	public T compile(Expression expression)
+	{
+		return compile(source(expression));
+	}
+	
+	private T compile(CompilationUnit unit)
+	{
+		String name = unit.getTypes()
+			.stream()
+			.findFirst()
+			.map(NodeWithSimpleName::getNameAsString)
+			.orElseThrow(() -> new IllegalArgumentException("Missing type"));
+		
+		return Reflect.compile(name, unit.toString())
+			.create()
+			.get();
 	}
 }

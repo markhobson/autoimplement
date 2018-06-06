@@ -53,7 +53,7 @@ public class Autoimplement<T>
 		random = new Random();
 	}
 	
-	public Optional<Expression> evolve()
+	public Optional<String> evolve()
 	{
 		List<Expression> population = randomPopulation();
 		
@@ -83,7 +83,7 @@ public class Autoimplement<T>
 			}
 		}
 		
-		return winner;
+		return winner.map(expression -> expressionCompiler.source(expression).toString());
 	}
 	
 	private List<Expression> randomPopulation()
