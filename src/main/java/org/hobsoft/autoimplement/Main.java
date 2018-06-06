@@ -13,8 +13,12 @@
  */
 package org.hobsoft.autoimplement;
 
+import java.util.Optional;
+
 import org.hobsoft.autoimplement.example.Calculator;
 import org.hobsoft.autoimplement.example.CalculatorTest;
+
+import com.github.javaparser.ast.expr.Expression;
 
 /**
  * Runs Autoimplement against the calculator example.
@@ -24,7 +28,11 @@ public class Main
 	public static void main(String[] args)
 	{
 		Autoimplement<Calculator> autoimplement = new Autoimplement<>(Calculator.class, CalculatorTest.class);
+		Optional<Expression> winner = autoimplement.evolve();
 		
-		autoimplement.evolve();
+		System.out.println(winner
+			.map(expression -> "Winner! " + expression)
+			.orElse("No winner found :(")
+		);
 	}
 }
