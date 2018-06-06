@@ -142,13 +142,11 @@ public class Autoimplement<T>
 	
 	private Expression crossover(Expression mum, Expression dad)
 	{
-		// TODO: crossover
-		return mum;
+		return Crossover.crossover(mum, dad);
 	}
 	
 	private Expression mutate(Expression individual)
 	{
-		// TODO: mutate
-		return individual;
+		return Mutator.mutate(individual);
 	}
 }
