@@ -20,9 +20,7 @@ import java.util.stream.Stream;
 
 import org.hobsoft.autoimplement.example.Calculator;
 import org.joor.Reflect;
-import org.junit.platform.launcher.Launcher;
-import org.junit.platform.launcher.core.LauncherFactory;
-import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -37,9 +35,6 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 
 import static java.util.stream.Collectors.toList;
 
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
-import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
-
 import static com.github.javaparser.ast.Modifier.PUBLIC;
 import static com.github.javaparser.ast.type.PrimitiveType.intType;
 
@@ -52,11 +47,7 @@ public class Autoimplement<T>
 {
 	private static final int POPULATION_SIZE = 10;
 	
-	private final Class<T> implementationClass;
-	
-	private final Class<?> testClass;
-	
-	private final Launcher launcher;
+	private final TestRunner<T> testRunner;
 	
 	private final Random random;
 	
@@ -64,22 +55,9 @@ public class Autoimplement<T>
 	
 	public Autoimplement(Class<T> implementationClass, Class<?> testClass)
 	{
-		this.implementationClass = implementationClass;
-		this.testClass = testClass;
-		launcher = LauncherFactory.create();
+		testRunner = new TestRunner<>(implementationClass, testClass);
 		random = new Random();
 		implCount = 0;
-	}
-	
-	public double evaluate(T implementation)
-	{
-		AutoimplementExtension.setImplementation(implementationClass, implementation);
-		
-		SummaryGeneratingListener listener = new SummaryGeneratingListener();
-		launcher.registerTestExecutionListeners(listener);
-		launcher.execute(request().selectors(selectClass(testClass)).build());
-		
-		return (double) listener.getSummary().getTestsSucceededCount() / listener.getSummary().getTestsFoundCount();
 	}
 	
 	public void evolve()
@@ -119,7 +97,7 @@ public class Autoimplement<T>
 	{
 		double[] fitness = population.stream()
 			.map(this::createImplementation)
-			.mapToDouble(this::evaluate)
+			.mapToDouble(this::fitness)
 			.toArray();
 		
 		for (int i = 0; i < population.size(); i++)
@@ -127,6 +105,13 @@ public class Autoimplement<T>
 			System.out.println(population.get(i));
 			System.out.println(fitness[i]);
 		}
+	}
+	
+	private double fitness(T implementation)
+	{
+		TestExecutionSummary summary = testRunner.run(implementation);
+		
+		return (double) summary.getTestsSucceededCount() / summary.getTestsFoundCount();
 	}
 	
 	private T createImplementation(Expression expression)
