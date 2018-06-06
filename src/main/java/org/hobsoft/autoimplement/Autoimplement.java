@@ -15,7 +15,6 @@ package org.hobsoft.autoimplement;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Stream;
 
 import org.hobsoft.autoimplement.example.Calculator;
@@ -26,9 +25,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.IntegerLiteralExpr;
-import com.github.javaparser.ast.expr.LiteralExpr;
-import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
@@ -49,14 +45,11 @@ public class Autoimplement<T>
 	
 	private final TestRunner<T> testRunner;
 	
-	private final Random random;
-	
 	private int implCount;
 	
 	public Autoimplement(Class<T> implementationClass, Class<?> testClass)
 	{
 		testRunner = new TestRunner<>(implementationClass, testClass);
-		random = new Random();
 		implCount = 0;
 	}
 	
@@ -69,28 +62,9 @@ public class Autoimplement<T>
 	
 	private List<Expression> randomPopulation()
 	{
-		return Stream.generate(this::randomExpression)
+		return Stream.generate(new ExpressionFactory())
 			.limit(POPULATION_SIZE)
 			.collect(toList());
-	}
-	
-	private Expression randomExpression()
-	{
-		return (random.nextDouble() < 0.5)
-			? randomLiteral()
-			: randomName();
-	}
-	
-	private LiteralExpr randomLiteral()
-	{
-		return new IntegerLiteralExpr(random.nextInt(10));
-	}
-	
-	private Expression randomName()
-	{
-		return (random.nextDouble() < 0.5)
-			? new NameExpr("x")
-			: new NameExpr("y");
 	}
 	
 	private void evolve(List<Expression> population)
