@@ -1,10 +1,5 @@
 package org.hobsoft.autoimplement;
 
-import static com.github.javaparser.ast.expr.BinaryExpr.Operator.DIVIDE;
-import static com.github.javaparser.ast.expr.BinaryExpr.Operator.MINUS;
-import static com.github.javaparser.ast.expr.BinaryExpr.Operator.MULTIPLY;
-import static com.github.javaparser.ast.expr.BinaryExpr.Operator.PLUS;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,7 +11,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.expr.BinaryExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.IntegerLiteralExpr;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.SimpleName;
+
+import static com.github.javaparser.ast.expr.BinaryExpr.Operator.DIVIDE;
+import static com.github.javaparser.ast.expr.BinaryExpr.Operator.MINUS;
+import static com.github.javaparser.ast.expr.BinaryExpr.Operator.MULTIPLY;
+import static com.github.javaparser.ast.expr.BinaryExpr.Operator.PLUS;
 
 public class Mutator
 {
@@ -125,15 +129,22 @@ public class Mutator
 		}
 		else
 		{
-			if (rand.nextDouble() > 0.5)
+			if (randExp.findRootNode().equals(randExp))
 			{
-				Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
-				parent.asBinaryExpr().setLeft(randomElement(OPERANDS));
+				randExp = exp;
 			}
 			else
 			{
-				Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
-				parent.asBinaryExpr().setRight(randomElement(OPERANDS));
+				if (rand.nextDouble() > 0.5)
+				{
+					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
+					parent.asBinaryExpr().setLeft(randomElement(OPERANDS));
+				}
+				else
+				{
+					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
+					parent.asBinaryExpr().setRight(randomElement(OPERANDS));
+				}
 			}
 		}
 		return randExp;
