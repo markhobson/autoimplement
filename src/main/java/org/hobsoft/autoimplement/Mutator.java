@@ -133,7 +133,7 @@ public class Mutator
 			else
 			{
 				Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
-				parent.asBinaryExpr().setLeft(randomElement(OPERANDS));
+				parent.asBinaryExpr().setRight(randomElement(OPERANDS));
 			}
 		}
 		return randExp;
