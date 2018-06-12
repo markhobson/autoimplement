@@ -22,8 +22,13 @@ import org.hobsoft.autoimplement.example.CalculatorTest;
 /**
  * Runs Autoimplement against the calculator example.
  */
-public class Main
+public final class Main
 {
+	private Main()
+	{
+		throw new AssertionError();
+	}
+	
 	public static void main(String[] args)
 	{
 		PrintStream log = System.out;
