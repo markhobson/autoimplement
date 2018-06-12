@@ -13,6 +13,7 @@
  */
 package org.hobsoft.autoimplement;
 
+import java.io.PrintStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map.Entry;
@@ -53,7 +54,7 @@ public class Autoimplement<T>
 		random = new Random();
 	}
 	
-	public Optional<String> evolve()
+	public Optional<String> evolve(PrintStream log)
 	{
 		List<Expression> population = randomPopulation();
 		
@@ -70,7 +71,7 @@ public class Autoimplement<T>
 				.max(comparingDouble(Entry::getValue))
 				.orElseThrow(() -> new IllegalStateException("Empty population"));
 			
-			System.out.format("Generation #%d: %s%n", generation + 1, fittest.getKey());
+			log.format("Generation #%d: %s%n", generation + 1, fittest.getKey());
 			
 			if (fittest.getValue() >= TARGET_FITNESS)
 			{
