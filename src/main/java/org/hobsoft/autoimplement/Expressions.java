@@ -13,37 +13,32 @@
  */
 package org.hobsoft.autoimplement;
 
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.Expression;
-
-import static org.hobsoft.autoimplement.Expressions.getRandomExpression;
+import com.github.javaparser.ast.expr.SimpleName;
 
 /**
- * Breeds AST expressions.
+ * Utilities for working with AST expressions.
  */
-public class Crossover
+public final class Expressions
 {
-	private static Random rand = new Random();
-	
-	public static Expression crossover(Expression mum, Expression dad)
+	private Expressions()
 	{
-		Expression baby;
-		
-		if (Math.random() > 0.5)
+		throw new AssertionError();
+	}
+	
+	public static Expression getRandomExpression(Expression exp, Random rand)
+	{
+		List<Node> nodes = exp.stream().collect(Collectors.toList());
+		Node node = nodes.get(rand.nextInt(nodes.size()));
+		while (node instanceof SimpleName)
 		{
-			baby = mum.clone();
-			Expression mumExp = getRandomExpression(baby, rand);
-			Expression dadExp = getRandomExpression(dad, rand);
-			baby.replace(mumExp, dadExp);
+			node = nodes.get(rand.nextInt(nodes.size()));
 		}
-		else
-		{
-			baby = dad.clone();
-			Expression dadExp = getRandomExpression(baby, rand);
-			Expression mumExp = getRandomExpression(mum, rand);
-			baby.replace(dadExp, mumExp);
-		}
-		return baby;
+		return (Expression) node;
 	}
 }

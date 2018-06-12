@@ -18,17 +18,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.expr.SimpleName;
+
+import static org.hobsoft.autoimplement.Expressions.getRandomExpression;
 
 import static com.github.javaparser.ast.expr.BinaryExpr.Operator.DIVIDE;
 import static com.github.javaparser.ast.expr.BinaryExpr.Operator.MINUS;
@@ -84,7 +82,7 @@ public class Mutator
 	
 	private static Expression removeOperatorOperand(Expression exp)
 	{
-		Expression randExp = getRandomExpression(exp);
+		Expression randExp = getRandomExpression(exp, rand);
 		
 		if (!randExp.findRootNode().equals(randExp))
 		{
@@ -119,7 +117,7 @@ public class Mutator
 	
 	private static Expression addOperatorOperand(Expression exp)
 	{
-		Expression randExp = getRandomExpression(exp);
+		Expression randExp = getRandomExpression(exp, rand);
 		BinaryExpr newExp = new BinaryExpr();
 		newExp.setOperator(randomElement(OPERATORS));
 		if (rand.nextDouble() > 0.5)
@@ -138,7 +136,7 @@ public class Mutator
 	
 	private static Expression changeNode(Expression exp)
 	{
-		Expression randExp = getRandomExpression(exp);
+		Expression randExp = getRandomExpression(exp, rand);
 		if (randExp.isBinaryExpr())
 		{
 			randExp.asBinaryExpr().setOperator(randomElement(OPERATORS));
@@ -164,17 +162,6 @@ public class Mutator
 			}
 		}
 		return randExp;
-	}
-	
-	public static Expression getRandomExpression(Expression exp)
-	{
-		List<Node> nodes = exp.stream().collect(Collectors.toList());
-		Node node = nodes.get(rand.nextInt(nodes.size()));
-		while (node instanceof SimpleName)
-		{
-			node = nodes.get(rand.nextInt(nodes.size()));
-		}
-		return (Expression) node;
 	}
 	
 	private static <T> T randomElement(Collection<T> collection)
