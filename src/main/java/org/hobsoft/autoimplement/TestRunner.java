@@ -21,6 +21,11 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 
+/**
+ * Runs a JUnit test against a given implementation.
+ * 
+ * @param <T> the implementation type
+ */
 public class TestRunner<T>
 {
 	private final Class<T> implementationClass;

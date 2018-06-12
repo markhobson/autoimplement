@@ -29,6 +29,11 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import static com.github.javaparser.ast.Modifier.PUBLIC;
 import static com.github.javaparser.ast.type.PrimitiveType.intType;
 
+/**
+ * Compiles AST expressions to object instances.
+ * 
+ * @param <T> the type to compile to
+ */
 public class ExpressionCompiler<T>
 {
 	private int implCount;

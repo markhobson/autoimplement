@@ -23,6 +23,9 @@ import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 
+/**
+ * Creates random AST expressions.
+ */
 public class ExpressionFactory implements Supplier<Expression>
 {
 	private final Random random;

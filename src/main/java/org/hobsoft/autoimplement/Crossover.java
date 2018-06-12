@@ -17,6 +17,9 @@ import static org.hobsoft.autoimplement.Mutator.getRandomExpression;
 
 import com.github.javaparser.ast.expr.Expression;
 
+/**
+ * Breeds AST expressions.
+ */
 public class Crossover
 {
 	public static Expression crossover(Expression mum, Expression dad)
