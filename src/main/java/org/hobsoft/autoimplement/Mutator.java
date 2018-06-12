@@ -57,11 +57,11 @@ public class Mutator
 		new NameExpr("y")
 	));
 	
-	private final Random rand;
+	private final Random random;
 	
-	public Mutator(Random rand)
+	public Mutator(Random random)
 	{
-		this.rand = rand;
+		this.random = random;
 	}
 	
 	public Expression mutate(Expression exp)
@@ -87,13 +87,13 @@ public class Mutator
 	
 	private Expression removeOperatorOperand(Expression exp)
 	{
-		Expression randExp = getRandomExpression(exp, rand);
+		Expression randExp = getRandomExpression(exp, random);
 		
 		if (!randExp.findRootNode().equals(randExp))
 		{
 			if (randExp.isBinaryExpr())
 			{
-				if (rand.nextDouble() > 0.5)
+				if (random.nextDouble() > 0.5)
 				{
 					randExp.replace(randExp.asBinaryExpr().getLeft());
 				}
@@ -122,10 +122,10 @@ public class Mutator
 	
 	private Expression addOperatorOperand(Expression exp)
 	{
-		Expression randExp = getRandomExpression(exp, rand);
+		Expression randExp = getRandomExpression(exp, random);
 		BinaryExpr newExp = new BinaryExpr();
 		newExp.setOperator(randomElement(OPERATORS));
-		if (rand.nextDouble() > 0.5)
+		if (random.nextDouble() > 0.5)
 		{
 			newExp.setLeft(randomElement(OPERANDS));
 			newExp.setRight(randExp.clone());
@@ -141,7 +141,7 @@ public class Mutator
 	
 	private Expression changeNode(Expression exp)
 	{
-		Expression randExp = getRandomExpression(exp, rand);
+		Expression randExp = getRandomExpression(exp, random);
 		if (randExp.isBinaryExpr())
 		{
 			randExp.asBinaryExpr().setOperator(randomElement(OPERATORS));
@@ -154,7 +154,7 @@ public class Mutator
 			}
 			else
 			{
-				if (rand.nextDouble() > 0.5)
+				if (random.nextDouble() > 0.5)
 				{
 					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
 					parent.asBinaryExpr().setLeft(randomElement(OPERANDS));
@@ -171,7 +171,7 @@ public class Mutator
 	
 	private <T> T randomElement(Collection<T> collection)
 	{
-		int index = rand.nextInt(collection.size());
+		int index = random.nextInt(collection.size());
 		return new ArrayList<>(collection).get(index);
 	}
 }

@@ -24,11 +24,11 @@ import static org.hobsoft.autoimplement.Expressions.getRandomExpression;
  */
 public class Crossover
 {
-	private final Random rand;
+	private final Random random;
 	
-	public Crossover(Random rand)
+	public Crossover(Random random)
 	{
-		this.rand = rand;
+		this.random = random;
 	}
 	
 	public Expression crossover(Expression mum, Expression dad)
@@ -38,15 +38,15 @@ public class Crossover
 		if (Math.random() > 0.5)
 		{
 			baby = mum.clone();
-			Expression mumExp = getRandomExpression(baby, rand);
-			Expression dadExp = getRandomExpression(dad, rand);
+			Expression mumExp = getRandomExpression(baby, random);
+			Expression dadExp = getRandomExpression(dad, random);
 			baby.replace(mumExp, dadExp);
 		}
 		else
 		{
 			baby = dad.clone();
-			Expression dadExp = getRandomExpression(baby, rand);
-			Expression mumExp = getRandomExpression(mum, rand);
+			Expression dadExp = getRandomExpression(baby, random);
+			Expression mumExp = getRandomExpression(mum, random);
 			baby.replace(dadExp, mumExp);
 		}
 		return baby;
