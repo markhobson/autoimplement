@@ -38,7 +38,7 @@ import static com.github.javaparser.ast.expr.BinaryExpr.Operator.PLUS;
  */
 public class Mutator
 {
-	private static final Double MUTATION_CHANCE = 0.05;
+	private static final double MUTATION_RATE = 0.1;
 	
 	private static final Set<BinaryExpr.Operator> OPERATORS = EnumSet.of(PLUS, MINUS, MULTIPLY, DIVIDE);
 	
@@ -64,25 +64,34 @@ public class Mutator
 		this.random = random;
 	}
 	
-	public Expression mutate(Expression exp)
+	public Expression mutate(Expression expression)
 	{
-		double val = random.nextDouble();
-		if (val < MUTATION_CHANCE)
+		if (random.nextDouble() < MUTATION_RATE)
 		{
-			return changeNode(exp);
+			expression = doMutate(expression);
 		}
-		else if (val < MUTATION_CHANCE * 2)
+		
+		return expression;
+	}
+	
+	private Expression doMutate(Expression expression)
+	{
+		switch (random.nextInt(3))
 		{
-			return addOperatorOperand(exp);
+			case 0:
+				expression = changeNode(expression);
+				break;
+			
+			case 1:
+				expression = addOperatorOperand(expression);
+				break;
+			
+			case 2:
+				expression = removeOperatorOperand(expression);
+				break;
 		}
-		else if (val < MUTATION_CHANCE * 3)
-		{
-			return removeOperatorOperand(exp);
-		}
-		else
-		{
-			return exp;
-		}
+		
+		return expression;
 	}
 	
 	private Expression removeOperatorOperand(Expression exp)
