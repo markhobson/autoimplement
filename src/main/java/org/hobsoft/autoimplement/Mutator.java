@@ -94,6 +94,55 @@ public class Mutator
 		return expression;
 	}
 	
+	private Expression changeNode(Expression exp)
+	{
+		Expression randExp = getRandomExpression(exp, random);
+		if (randExp.isBinaryExpr())
+		{
+			randExp.asBinaryExpr().setOperator(randomElement(OPERATORS));
+		}
+		else
+		{
+			if (randExp.findRootNode().equals(randExp))
+			{
+				randExp = exp;
+			}
+			else
+			{
+				if (random.nextDouble() > 0.5)
+				{
+					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
+					parent.asBinaryExpr().setLeft(randomElement(OPERANDS));
+				}
+				else
+				{
+					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
+					parent.asBinaryExpr().setRight(randomElement(OPERANDS));
+				}
+			}
+		}
+		return randExp;
+	}
+	
+	private Expression addOperatorOperand(Expression exp)
+	{
+		Expression randExp = getRandomExpression(exp, random);
+		BinaryExpr newExp = new BinaryExpr();
+		newExp.setOperator(randomElement(OPERATORS));
+		if (random.nextDouble() > 0.5)
+		{
+			newExp.setLeft(randomElement(OPERANDS));
+			newExp.setRight(randExp.clone());
+		}
+		else
+		{
+			newExp.setLeft(randExp.clone());
+			newExp.setRight(randomElement(OPERANDS));
+		}
+		randExp.replace(newExp);
+		return randExp;
+	}
+	
 	private Expression removeOperatorOperand(Expression exp)
 	{
 		Expression randExp = getRandomExpression(exp, random);
@@ -123,55 +172,6 @@ public class Mutator
 				else
 				{
 					parent.replace(parent.asBinaryExpr().getLeft());
-				}
-			}
-		}
-		return randExp;
-	}
-	
-	private Expression addOperatorOperand(Expression exp)
-	{
-		Expression randExp = getRandomExpression(exp, random);
-		BinaryExpr newExp = new BinaryExpr();
-		newExp.setOperator(randomElement(OPERATORS));
-		if (random.nextDouble() > 0.5)
-		{
-			newExp.setLeft(randomElement(OPERANDS));
-			newExp.setRight(randExp.clone());
-		}
-		else
-		{
-			newExp.setLeft(randExp.clone());
-			newExp.setRight(randomElement(OPERANDS));
-		}
-		randExp.replace(newExp);
-		return randExp;
-	}
-	
-	private Expression changeNode(Expression exp)
-	{
-		Expression randExp = getRandomExpression(exp, random);
-		if (randExp.isBinaryExpr())
-		{
-			randExp.asBinaryExpr().setOperator(randomElement(OPERATORS));
-		}
-		else
-		{
-			if (randExp.findRootNode().equals(randExp))
-			{
-				randExp = exp;
-			}
-			else
-			{
-				if (random.nextDouble() > 0.5)
-				{
-					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
-					parent.asBinaryExpr().setLeft(randomElement(OPERANDS));
-				}
-				else
-				{
-					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
-					parent.asBinaryExpr().setRight(randomElement(OPERANDS));
 				}
 			}
 		}
