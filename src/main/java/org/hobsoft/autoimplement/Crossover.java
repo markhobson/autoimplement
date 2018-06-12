@@ -35,7 +35,7 @@ public class Crossover
 	{
 		Expression baby;
 		
-		if (Math.random() > 0.5)
+		if (random.nextDouble() > 0.5)
 		{
 			baby = mum.clone();
 			Expression mumExp = getRandomExpression(baby, random);

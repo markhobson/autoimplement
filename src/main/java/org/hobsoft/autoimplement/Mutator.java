@@ -66,7 +66,7 @@ public class Mutator
 	
 	public Expression mutate(Expression exp)
 	{
-		double val = Math.random();
+		double val = random.nextDouble();
 		if (val < MUTATION_CHANCE)
 		{
 			return changeNode(exp);
