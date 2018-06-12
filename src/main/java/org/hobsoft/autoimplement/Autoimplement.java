@@ -49,12 +49,15 @@ public class Autoimplement<T>
 	
 	private final Mutator mutator;
 	
+	private final Crossover crossover;
+	
 	public Autoimplement(Class<T> implementationClass, Class<?> testClass)
 	{
 		expressionCompiler = new ExpressionCompiler<>();
 		testRunner = new TestRunner<>(implementationClass, testClass);
 		random = new Random();
 		mutator = new Mutator(random);
+		crossover = new Crossover(random);
 	}
 	
 	public Optional<String> evolve(PrintStream log)
@@ -117,7 +120,7 @@ public class Autoimplement<T>
 		Expression mum = select(populationAndFitness);
 		Expression dad = select(populationAndFitness);
 		
-		return mutator.mutate(crossover(mum, dad));
+		return mutator.mutate(crossover.crossover(mum, dad));
 	}
 	
 	private Expression select(List<Entry<Expression, Double>> populationAndFitness)
@@ -143,10 +146,5 @@ public class Autoimplement<T>
 		}
 		
 		throw new IllegalStateException("No parents found");
-	}
-	
-	private Expression crossover(Expression mum, Expression dad)
-	{
-		return Crossover.crossover(mum, dad);
 	}
 }

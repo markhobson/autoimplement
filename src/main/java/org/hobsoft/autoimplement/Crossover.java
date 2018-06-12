@@ -24,9 +24,14 @@ import static org.hobsoft.autoimplement.Expressions.getRandomExpression;
  */
 public class Crossover
 {
-	private static Random rand = new Random();
+	private final Random rand;
 	
-	public static Expression crossover(Expression mum, Expression dad)
+	public Crossover(Random rand)
+	{
+		this.rand = rand;
+	}
+	
+	public Expression crossover(Expression mum, Expression dad)
 	{
 		Expression baby;
 		
