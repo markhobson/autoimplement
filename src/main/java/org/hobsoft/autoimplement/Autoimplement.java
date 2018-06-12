@@ -47,11 +47,14 @@ public class Autoimplement<T>
 	
 	private final Random random;
 	
+	private final Mutator mutator;
+	
 	public Autoimplement(Class<T> implementationClass, Class<?> testClass)
 	{
 		expressionCompiler = new ExpressionCompiler<>();
 		testRunner = new TestRunner<>(implementationClass, testClass);
 		random = new Random();
+		mutator = new Mutator(random);
 	}
 	
 	public Optional<String> evolve(PrintStream log)
@@ -114,7 +117,7 @@ public class Autoimplement<T>
 		Expression mum = select(populationAndFitness);
 		Expression dad = select(populationAndFitness);
 		
-		return mutate(crossover(mum, dad));
+		return mutator.mutate(crossover(mum, dad));
 	}
 	
 	private Expression select(List<Entry<Expression, Double>> populationAndFitness)
@@ -145,10 +148,5 @@ public class Autoimplement<T>
 	private Expression crossover(Expression mum, Expression dad)
 	{
 		return Crossover.crossover(mum, dad);
-	}
-	
-	private Expression mutate(Expression individual)
-	{
-		return Mutator.mutate(individual);
 	}
 }

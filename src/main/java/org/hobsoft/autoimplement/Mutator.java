@@ -57,9 +57,14 @@ public class Mutator
 		new NameExpr("y")
 	));
 	
-	private static Random rand = new Random();
+	private final Random rand;
 	
-	public static Expression mutate(Expression exp)
+	public Mutator(Random rand)
+	{
+		this.rand = rand;
+	}
+	
+	public Expression mutate(Expression exp)
 	{
 		double val = Math.random();
 		if (val < MUTATION_CHANCE)
@@ -80,7 +85,7 @@ public class Mutator
 		}
 	}
 	
-	private static Expression removeOperatorOperand(Expression exp)
+	private Expression removeOperatorOperand(Expression exp)
 	{
 		Expression randExp = getRandomExpression(exp, rand);
 		
@@ -115,7 +120,7 @@ public class Mutator
 		return randExp;
 	}
 	
-	private static Expression addOperatorOperand(Expression exp)
+	private Expression addOperatorOperand(Expression exp)
 	{
 		Expression randExp = getRandomExpression(exp, rand);
 		BinaryExpr newExp = new BinaryExpr();
@@ -134,7 +139,7 @@ public class Mutator
 		return randExp;
 	}
 	
-	private static Expression changeNode(Expression exp)
+	private Expression changeNode(Expression exp)
 	{
 		Expression randExp = getRandomExpression(exp, rand);
 		if (randExp.isBinaryExpr())
@@ -164,7 +169,7 @@ public class Mutator
 		return randExp;
 	}
 	
-	private static <T> T randomElement(Collection<T> collection)
+	private <T> T randomElement(Collection<T> collection)
 	{
 		int index = rand.nextInt(collection.size());
 		return new ArrayList<>(collection).get(index);
