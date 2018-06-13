@@ -103,16 +103,9 @@ public class Mutator
 		{
 			changeOperator(node.asBinaryExpr());
 		}
-		else if (node == root)
-		{
-			root = randomOperand();
-		}
 		else
 		{
-			if (!node.replace(randomOperand()))
-			{
-				throw new IllegalStateException("Cannot replace node");
-			}
+			root = replace(root, node, randomOperand());
 		}
 		
 		return root;
@@ -136,7 +129,7 @@ public class Mutator
 			swapChildren(newNode);
 		}
 		
-		node.replace(newNode);
+		root = replace(root, node, newNode);
 		
 		return root;
 	}
@@ -167,6 +160,21 @@ public class Mutator
 		return node.getParentNode()
 			.map(parent -> ((Expression) parent).asBinaryExpr())
 			.orElseThrow(() -> new IllegalStateException("No parent"));
+	}
+	
+	private static Expression replace(Expression root, Node node, Expression newNode)
+	{
+		if (node == root)
+		{
+			return newNode;
+		}
+		
+		if (!node.replace(newNode))
+		{
+			throw new IllegalStateException("Cannot replace node");
+		}
+		
+		return root;
 	}
 	
 	private static void swapChildren(BinaryExpr operator)
