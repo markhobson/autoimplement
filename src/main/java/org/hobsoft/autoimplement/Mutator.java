@@ -65,58 +65,57 @@ public class Mutator
 		this.random = random;
 	}
 	
-	public Expression mutate(Expression node)
+	public Expression mutate(Expression root)
 	{
 		if (random.nextDouble() < MUTATION_RATE)
 		{
-			node = doMutate(node);
+			root = doMutate(root);
 		}
 		
-		return node;
+		return root;
 	}
 	
-	private Expression doMutate(Expression node)
+	private Expression doMutate(Expression root)
 	{
 		switch (random.nextInt(3))
 		{
 			case 0:
-				node = changeNode(node);
+				root = changeNode(root);
 				break;
 			
 			case 1:
-				node = addOperatorOperand(node);
+				root = addOperatorOperand(root);
 				break;
 			
 			case 2:
-				node = removeOperatorOperand(node);
+				root = removeOperatorOperand(root);
 				break;
 		}
 		
-		return node;
+		return root;
 	}
 	
-	private Expression changeNode(Expression node)
+	private Expression changeNode(Expression root)
 	{
-		Expression changeNode = getRandomExpression(node, random);
+		Expression node = getRandomExpression(root, random);
 		
-		if (changeNode.isBinaryExpr())
+		if (node.isBinaryExpr())
 		{
-			changeOperator(changeNode.asBinaryExpr());
+			changeOperator(node.asBinaryExpr());
 		}
-		else if (isRoot(changeNode))
+		else if (isRoot(node))
 		{
-			node = randomOperand();
-		}
-		else if (random.nextBoolean())
-		{
-			getParentOperator(changeNode).setLeft(randomOperand());
+			root = randomOperand();
 		}
 		else
 		{
-			getParentOperator(changeNode).setRight(randomOperand());
+			if (!node.replace(randomOperand()))
+			{
+				throw new IllegalStateException("Cannot replace node");
+			}
 		}
 		
-		return node;
+		return root;
 	}
 	
 	private void changeOperator(BinaryExpr operator)
@@ -180,15 +179,7 @@ public class Mutator
 	
 	private static boolean isRoot(Node node)
 	{
-		return node.findRootNode().equals(node);
-	}
-	
-	private static BinaryExpr getParentOperator(Node node)
-	{
-		return node.getParentNode()
-			.map(parent -> (Expression) parent)
-			.orElseThrow(() -> new IllegalStateException("No parent"))
-			.asBinaryExpr();
+		return !node.getParentNode().isPresent();
 	}
 	
 	private Expression randomOperand()
