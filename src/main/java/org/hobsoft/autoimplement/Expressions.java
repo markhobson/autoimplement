@@ -42,11 +42,16 @@ final class Expressions
 			return newNode;
 		}
 		
+		strictReplace(node, newNode);
+		
+		return root;
+	}
+	
+	private static void strictReplace(Node node, Node newNode)
+	{
 		if (!node.replace(newNode))
 		{
 			throw new IllegalStateException("Cannot replace node");
 		}
-		
-		return root;
 	}
 }

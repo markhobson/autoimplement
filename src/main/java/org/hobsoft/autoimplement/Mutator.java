@@ -143,14 +143,14 @@ public class Mutator
 		{
 			Expression newNode = randomChild(node.asBinaryExpr());
 			
-			node.replace(newNode);
+			root = rootSafeReplace(root, node, newNode);
 		}
 		else if (node != root)
 		{
 			BinaryExpr parent = getParentOperator(node);
 			Expression sibling = parent.getLeft() == node ? parent.getRight() : parent.getLeft();
 			
-			parent.replace(sibling);
+			root = rootSafeReplace(root, parent, sibling);
 		}
 		
 		return root;
