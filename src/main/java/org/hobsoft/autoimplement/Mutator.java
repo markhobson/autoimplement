@@ -84,7 +84,7 @@ public class Mutator
 				break;
 			
 			case 1:
-				root = addOperatorOperand(root);
+				root = addNode(root);
 				break;
 			
 			case 2:
@@ -123,23 +123,22 @@ public class Mutator
 		operator.setOperator(randomElement(OPERATORS));
 	}
 	
-	private Expression addOperatorOperand(Expression exp)
+	private Expression addNode(Expression root)
 	{
-		Expression randExp = getRandomExpression(exp, random);
-		BinaryExpr newExp = new BinaryExpr();
-		newExp.setOperator(randomElement(OPERATORS));
-		if (random.nextDouble() > 0.5)
+		Expression node = getRandomExpression(root, random);
+		
+		BinaryExpr newNode = randomOperator();
+		newNode.setLeft(node.clone());
+		newNode.setRight(randomOperand());
+		
+		if (random.nextBoolean())
 		{
-			newExp.setLeft(randomOperand());
-			newExp.setRight(randExp.clone());
+			swapChildren(newNode);
 		}
-		else
-		{
-			newExp.setLeft(randExp.clone());
-			newExp.setRight(randomOperand());
-		}
-		randExp.replace(newExp);
-		return exp;
+		
+		node.replace(newNode);
+		
+		return root;
 	}
 	
 	private Expression removeOperatorOperand(Expression exp)
@@ -182,9 +181,23 @@ public class Mutator
 		return !node.getParentNode().isPresent();
 	}
 	
+	private static void swapChildren(BinaryExpr operator)
+	{
+		Expression left = operator.getLeft();
+		operator.setLeft(operator.getRight());
+		operator.setRight(left);
+	}
+	
 	private Expression randomOperand()
 	{
 		return randomElement(OPERANDS);
+	}
+	
+	private BinaryExpr randomOperator()
+	{
+		BinaryExpr operator = new BinaryExpr();
+		operator.setOperator(randomElement(OPERATORS));
+		return operator;
 	}
 	
 	private <T> T randomElement(Collection<T> collection)
