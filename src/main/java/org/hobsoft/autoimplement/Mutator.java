@@ -140,7 +140,7 @@ public class Mutator
 			newExp.setRight(randomOperand());
 		}
 		randExp.replace(newExp);
-		return randExp;
+		return exp;
 	}
 	
 	private Expression removeOperatorOperand(Expression exp)
@@ -175,7 +175,7 @@ public class Mutator
 				}
 			}
 		}
-		return randExp;
+		return exp;
 	}
 	
 	private static boolean isRoot(Node node)
