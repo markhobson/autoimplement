@@ -16,8 +16,6 @@ package org.hobsoft.autoimplement;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import com.github.javaparser.ast.expr.BinaryExpr;
-import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.LiteralExpr;
@@ -38,50 +36,23 @@ public class ExpressionFactory implements Supplier<Expression>
 	@Override
 	public Expression get()
 	{
-		BinaryExpr expression = new BinaryExpr();
-		expression.setOperator(randomOperator());
-		expression.setLeft(randomOperand());
-		expression.setRight(randomOperand());
-		return expression;
-	}
-	
-	private Operator randomOperator()
-	{
-		double rand = random.nextDouble();
-		if (rand < 0.25)
-		{
-			return Operator.PLUS;
-		}
-		else if (rand < 0.5)
-		{
-			return Operator.MINUS;
-		}
-		else if (rand < 0.75)
-		{
-			return Operator.MULTIPLY;
-		}
-		else
-		{
-			return Operator.DIVIDE;
-		}
+		return randomOperand();
 	}
 	
 	private Expression randomOperand()
 	{
-		return (random.nextDouble() < 0.5)
-			? randomLiteral()
-			: randomName();
+		return random.nextBoolean() ? randomLiteral() : randomName();
 	}
 	
 	private LiteralExpr randomLiteral()
 	{
-		return new IntegerLiteralExpr(random.nextInt(10));
+		int value = random.nextInt(10);
+		return new IntegerLiteralExpr(value);
 	}
 	
 	private Expression randomName()
 	{
-		return (random.nextDouble() < 0.5)
-			? new NameExpr("x")
-			: new NameExpr("y");
+		String name = random.nextBoolean() ? "x" : "y";
+		return new NameExpr(name);
 	}
 }
