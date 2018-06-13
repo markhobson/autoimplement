@@ -28,6 +28,7 @@ import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 
 import static org.hobsoft.autoimplement.Expressions.findRandomExpression;
+import static org.hobsoft.autoimplement.Expressions.rootSafeReplace;
 
 import static com.github.javaparser.ast.expr.BinaryExpr.Operator.DIVIDE;
 import static com.github.javaparser.ast.expr.BinaryExpr.Operator.MINUS;
@@ -105,7 +106,7 @@ public class Mutator
 		}
 		else
 		{
-			root = replace(root, node, randomOperand());
+			root = rootSafeReplace(root, node, randomOperand());
 		}
 		
 		return root;
@@ -129,7 +130,7 @@ public class Mutator
 			swapChildren(newNode);
 		}
 		
-		root = replace(root, node, newNode);
+		root = rootSafeReplace(root, node, newNode);
 		
 		return root;
 	}
@@ -160,21 +161,6 @@ public class Mutator
 		return node.getParentNode()
 			.map(parent -> ((Expression) parent).asBinaryExpr())
 			.orElseThrow(() -> new IllegalStateException("No parent"));
-	}
-	
-	private static Expression replace(Expression root, Node node, Expression newNode)
-	{
-		if (node == root)
-		{
-			return newNode;
-		}
-		
-		if (!node.replace(newNode))
-		{
-			throw new IllegalStateException("Cannot replace node");
-		}
-		
-		return root;
 	}
 	
 	private static void swapChildren(BinaryExpr operator)

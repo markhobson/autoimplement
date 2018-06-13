@@ -16,6 +16,7 @@ package org.hobsoft.autoimplement;
 import java.util.List;
 import java.util.Random;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.Expression;
 
 /**
@@ -32,5 +33,20 @@ final class Expressions
 	{
 		List<Expression> expressions = root.findAll(Expression.class);
 		return expressions.get(random.nextInt(expressions.size()));
+	}
+	
+	static Expression rootSafeReplace(Expression root, Node node, Expression newNode)
+	{
+		if (node == root)
+		{
+			return newNode;
+		}
+		
+		if (!node.replace(newNode))
+		{
+			throw new IllegalStateException("Cannot replace node");
+		}
+		
+		return root;
 	}
 }
