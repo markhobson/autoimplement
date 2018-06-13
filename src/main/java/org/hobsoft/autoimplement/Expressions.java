@@ -15,30 +15,22 @@ package org.hobsoft.autoimplement;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.SimpleName;
 
 /**
  * Utilities for working with AST expressions.
  */
-public final class Expressions
+final class Expressions
 {
 	private Expressions()
 	{
 		throw new AssertionError();
 	}
 	
-	public static Expression getRandomExpression(Expression exp, Random rand)
+	static Expression findRandomExpression(Expression root, Random random)
 	{
-		List<Node> nodes = exp.stream().collect(Collectors.toList());
-		Node node = nodes.get(rand.nextInt(nodes.size()));
-		while (node instanceof SimpleName)
-		{
-			node = nodes.get(rand.nextInt(nodes.size()));
-		}
-		return (Expression) node;
+		List<Expression> expressions = root.findAll(Expression.class);
+		return expressions.get(random.nextInt(expressions.size()));
 	}
 }

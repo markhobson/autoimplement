@@ -27,7 +27,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 
-import static org.hobsoft.autoimplement.Expressions.getRandomExpression;
+import static org.hobsoft.autoimplement.Expressions.findRandomExpression;
 
 import static com.github.javaparser.ast.expr.BinaryExpr.Operator.DIVIDE;
 import static com.github.javaparser.ast.expr.BinaryExpr.Operator.MINUS;
@@ -97,7 +97,7 @@ public class Mutator
 	
 	private Expression changeNode(Expression root)
 	{
-		Expression node = getRandomExpression(root, random);
+		Expression node = findRandomExpression(root, random);
 		
 		if (node.isBinaryExpr())
 		{
@@ -125,7 +125,7 @@ public class Mutator
 	
 	private Expression addNode(Expression root)
 	{
-		Expression node = getRandomExpression(root, random);
+		Expression node = findRandomExpression(root, random);
 		
 		BinaryExpr newNode = randomOperator();
 		newNode.setLeft(node.clone());
@@ -143,7 +143,7 @@ public class Mutator
 	
 	private Expression removeNode(Expression root)
 	{
-		Expression node = getRandomExpression(root, random);
+		Expression node = findRandomExpression(root, random);
 		
 		if (node.isBinaryExpr())
 		{
