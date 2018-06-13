@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
@@ -64,64 +65,63 @@ public class Mutator
 		this.random = random;
 	}
 	
-	public Expression mutate(Expression expression)
+	public Expression mutate(Expression node)
 	{
 		if (random.nextDouble() < MUTATION_RATE)
 		{
-			expression = doMutate(expression);
+			node = doMutate(node);
 		}
 		
-		return expression;
+		return node;
 	}
 	
-	private Expression doMutate(Expression expression)
+	private Expression doMutate(Expression node)
 	{
 		switch (random.nextInt(3))
 		{
 			case 0:
-				expression = changeNode(expression);
+				node = changeNode(node);
 				break;
 			
 			case 1:
-				expression = addOperatorOperand(expression);
+				node = addOperatorOperand(node);
 				break;
 			
 			case 2:
-				expression = removeOperatorOperand(expression);
+				node = removeOperatorOperand(node);
 				break;
 		}
 		
-		return expression;
+		return node;
 	}
 	
-	private Expression changeNode(Expression exp)
+	private Expression changeNode(Expression node)
 	{
-		Expression randExp = getRandomExpression(exp, random);
-		if (randExp.isBinaryExpr())
+		Expression changeNode = getRandomExpression(node, random);
+		
+		if (changeNode.isBinaryExpr())
 		{
-			randExp.asBinaryExpr().setOperator(randomElement(OPERATORS));
+			changeOperator(changeNode.asBinaryExpr());
+		}
+		else if (isRoot(changeNode))
+		{
+			node = randomOperand();
+		}
+		else if (random.nextBoolean())
+		{
+			getParentOperator(changeNode).setLeft(randomOperand());
 		}
 		else
 		{
-			if (randExp.findRootNode().equals(randExp))
-			{
-				randExp = exp;
-			}
-			else
-			{
-				if (random.nextDouble() > 0.5)
-				{
-					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
-					parent.asBinaryExpr().setLeft(randomElement(OPERANDS));
-				}
-				else
-				{
-					Expression parent = (Expression) randExp.getParentNode().orElseThrow(IllegalStateException::new);
-					parent.asBinaryExpr().setRight(randomElement(OPERANDS));
-				}
-			}
+			getParentOperator(changeNode).setRight(randomOperand());
 		}
-		return randExp;
+		
+		return node;
+	}
+	
+	private void changeOperator(BinaryExpr operator)
+	{
+		operator.setOperator(randomElement(OPERATORS));
 	}
 	
 	private Expression addOperatorOperand(Expression exp)
@@ -131,13 +131,13 @@ public class Mutator
 		newExp.setOperator(randomElement(OPERATORS));
 		if (random.nextDouble() > 0.5)
 		{
-			newExp.setLeft(randomElement(OPERANDS));
+			newExp.setLeft(randomOperand());
 			newExp.setRight(randExp.clone());
 		}
 		else
 		{
 			newExp.setLeft(randExp.clone());
-			newExp.setRight(randomElement(OPERANDS));
+			newExp.setRight(randomOperand());
 		}
 		randExp.replace(newExp);
 		return randExp;
@@ -147,7 +147,7 @@ public class Mutator
 	{
 		Expression randExp = getRandomExpression(exp, random);
 		
-		if (!randExp.findRootNode().equals(randExp))
+		if (!isRoot(randExp))
 		{
 			if (randExp.isBinaryExpr())
 			{
@@ -176,6 +176,24 @@ public class Mutator
 			}
 		}
 		return randExp;
+	}
+	
+	private static boolean isRoot(Node node)
+	{
+		return node.findRootNode().equals(node);
+	}
+	
+	private static BinaryExpr getParentOperator(Node node)
+	{
+		return node.getParentNode()
+			.map(parent -> (Expression) parent)
+			.orElseThrow(() -> new IllegalStateException("No parent"))
+			.asBinaryExpr();
+	}
+	
+	private Expression randomOperand()
+	{
+		return randomElement(OPERANDS);
 	}
 	
 	private <T> T randomElement(Collection<T> collection)
