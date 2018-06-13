@@ -88,7 +88,7 @@ public class Mutator
 				break;
 			
 			case 2:
-				root = removeOperatorOperand(root);
+				root = removeNode(root);
 				break;
 		}
 		
@@ -103,7 +103,7 @@ public class Mutator
 		{
 			changeOperator(node.asBinaryExpr());
 		}
-		else if (isRoot(node))
+		else if (node == root)
 		{
 			root = randomOperand();
 		}
@@ -141,44 +141,32 @@ public class Mutator
 		return root;
 	}
 	
-	private Expression removeOperatorOperand(Expression exp)
+	private Expression removeNode(Expression root)
 	{
-		Expression randExp = getRandomExpression(exp, random);
+		Expression node = getRandomExpression(root, random);
 		
-		if (!isRoot(randExp))
+		if (node.isBinaryExpr())
 		{
-			if (randExp.isBinaryExpr())
-			{
-				if (random.nextDouble() > 0.5)
-				{
-					randExp.replace(randExp.asBinaryExpr().getLeft());
-				}
-				else
-				{
-					randExp.replace(randExp.asBinaryExpr().getRight());
-				}
-			}
-			else
-			{
-				Expression parent = (Expression) randExp.getParentNode()
-					.orElseThrow(IllegalStateException::new);
-				
-				if (parent.asBinaryExpr().getLeft().equals(randExp))
-				{
-					parent.replace(parent.asBinaryExpr().getRight());
-				}
-				else
-				{
-					parent.replace(parent.asBinaryExpr().getLeft());
-				}
-			}
+			Expression newNode = randomChild(node.asBinaryExpr());
+			
+			node.replace(newNode);
 		}
-		return exp;
+		else if (node != root)
+		{
+			BinaryExpr parent = getParentOperator(node);
+			Expression sibling = parent.getLeft() == node ? parent.getRight() : parent.getLeft();
+			
+			parent.replace(sibling);
+		}
+		
+		return root;
 	}
 	
-	private static boolean isRoot(Node node)
+	private static BinaryExpr getParentOperator(Node node)
 	{
-		return !node.getParentNode().isPresent();
+		return node.getParentNode()
+			.map(parent -> ((Expression) parent).asBinaryExpr())
+			.orElseThrow(() -> new IllegalStateException("No parent"));
 	}
 	
 	private static void swapChildren(BinaryExpr operator)
@@ -198,6 +186,11 @@ public class Mutator
 		BinaryExpr operator = new BinaryExpr();
 		operator.setOperator(randomElement(OPERATORS));
 		return operator;
+	}
+	
+	private Expression randomChild(BinaryExpr operator)
+	{
+		return random.nextBoolean() ? operator.getLeft() : operator.getRight();
 	}
 	
 	private <T> T randomElement(Collection<T> collection)
