@@ -35,7 +35,7 @@ final class Expressions
 		return expressions.get(random.nextInt(expressions.size()));
 	}
 	
-	static Expression rootSafeReplace(Expression root, Node node, Expression newNode)
+	static Expression replaceOrReroot(Expression root, Node node, Expression newNode)
 	{
 		if (node == root)
 		{

@@ -18,7 +18,7 @@ import java.util.Random;
 import com.github.javaparser.ast.expr.Expression;
 
 import static org.hobsoft.autoimplement.Expressions.findRandomExpression;
-import static org.hobsoft.autoimplement.Expressions.rootSafeReplace;
+import static org.hobsoft.autoimplement.Expressions.replaceOrReroot;
 
 /**
  * Breeds AST expressions.
@@ -48,7 +48,7 @@ public class Crossover
 		
 		Expression mumNode = findRandomExpression(mum, random);
 		Expression dadNode = findRandomExpression(dad, random);
-		baby = rootSafeReplace(baby, mumNode, dadNode);
+		baby = replaceOrReroot(baby, mumNode, dadNode);
 		
 		return baby;
 	}
