@@ -19,6 +19,7 @@ import org.hobsoft.autoimplement.example.Calculator;
 import org.joor.Reflect;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
@@ -60,7 +61,7 @@ public class ExpressionCompiler<T>
 		body.addStatement(new ReturnStmt(expression));
 		method.setBody(body);
 		
-		return unit;
+		return addParenthesis(unit.clone());
 	}
 
 	public T compile(Expression expression)
@@ -79,5 +80,10 @@ public class ExpressionCompiler<T>
 		return Reflect.compile(name, unit.toString())
 			.create()
 			.get();
+	}
+	
+	private static CompilationUnit addParenthesis(Node node)
+	{
+		return (CompilationUnit) node.accept(new AddEnclosedExprVisitor(), null);
 	}
 }
