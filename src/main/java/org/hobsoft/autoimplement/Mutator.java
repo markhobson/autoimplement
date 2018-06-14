@@ -14,18 +14,14 @@
 package org.hobsoft.autoimplement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.IntegerLiteralExpr;
-import com.github.javaparser.ast.expr.NameExpr;
 
 import static org.hobsoft.autoimplement.Expressions.findRandomExpression;
 import static org.hobsoft.autoimplement.Expressions.rootSafeReplace;
@@ -44,25 +40,13 @@ public class Mutator
 	
 	private static final Set<BinaryExpr.Operator> OPERATORS = EnumSet.of(PLUS, MINUS, MULTIPLY, DIVIDE);
 	
-	private static final Set<Expression> OPERANDS = new HashSet<>(Arrays.asList(
-		new IntegerLiteralExpr(0),
-		new IntegerLiteralExpr(1),
-		new IntegerLiteralExpr(2),
-		new IntegerLiteralExpr(3),
-		new IntegerLiteralExpr(4),
-		new IntegerLiteralExpr(5),
-		new IntegerLiteralExpr(6),
-		new IntegerLiteralExpr(7),
-		new IntegerLiteralExpr(8),
-		new IntegerLiteralExpr(9),
-		new NameExpr("x"),
-		new NameExpr("y")
-	));
+	private final ExpressionFactory expressionFactory;
 	
 	private final Random random;
 	
-	public Mutator(Random random)
+	public Mutator(ExpressionFactory expressionFactory, Random random)
 	{
+		this.expressionFactory = expressionFactory;
 		this.random = random;
 	}
 	
@@ -172,7 +156,7 @@ public class Mutator
 	
 	private Expression randomOperand()
 	{
-		return randomElement(OPERANDS);
+		return expressionFactory.get();
 	}
 	
 	private BinaryExpr randomOperator()

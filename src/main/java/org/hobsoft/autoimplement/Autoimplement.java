@@ -47,6 +47,8 @@ public class Autoimplement<T>
 	
 	private final Random random;
 	
+	private final ExpressionFactory expressionFactory;
+	
 	private final Mutator mutator;
 	
 	private final Crossover crossover;
@@ -56,7 +58,8 @@ public class Autoimplement<T>
 		expressionCompiler = new ExpressionCompiler<>();
 		testRunner = new TestRunner<>(implementationClass, testClass);
 		random = new Random();
-		mutator = new Mutator(random);
+		expressionFactory = new ExpressionFactory(random);
+		mutator = new Mutator(expressionFactory, random);
 		crossover = new Crossover(random);
 	}
 	
@@ -95,7 +98,7 @@ public class Autoimplement<T>
 	
 	private List<Expression> randomPopulation()
 	{
-		return Stream.generate(new ExpressionFactory())
+		return Stream.generate(expressionFactory)
 			.limit(POPULATION_SIZE)
 			.collect(toList());
 	}

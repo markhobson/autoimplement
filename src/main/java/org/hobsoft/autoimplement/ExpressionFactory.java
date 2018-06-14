@@ -28,9 +28,9 @@ public class ExpressionFactory implements Supplier<Expression>
 {
 	private final Random random;
 	
-	public ExpressionFactory()
+	public ExpressionFactory(Random random)
 	{
-		random = new Random();
+		this.random = random;
 	}
 	
 	@Override
