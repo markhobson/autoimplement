@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.opentest4j.AssertionFailedError;
 
 import com.github.javaparser.ast.expr.Expression;
 
@@ -108,7 +109,29 @@ public class Autoimplement<T>
 		T implementation = expressionCompiler.compile(expression);
 		TestExecutionSummary summary = testRunner.run(implementation);
 		
-		return (double) summary.getTestsSucceededCount() / summary.getTestsFoundCount();
+		double successFitness = summary.getTestsSucceededCount();
+		double failureFitness = summary.getFailures()
+			.stream()
+			.mapToDouble(failure -> fitness(failure.getException()))
+			.sum();
+		
+		return (successFitness + failureFitness) / summary.getTestsFoundCount();
+	}
+	
+	private static double fitness(Throwable exception)
+	{
+		if (!(exception instanceof AssertionFailedError))
+		{
+			return 0;
+		}
+		
+		AssertionFailedError error = (AssertionFailedError) exception;
+		int expected = (int) error.getExpected().getValue();
+		int actual = (int) error.getActual().getValue();
+		
+		int distance = Math.abs(expected - actual);
+		
+		return 0.9d / distance;
 	}
 	
 	private List<Expression> evolve(List<Entry<Expression, Double>> populationAndFitness)
