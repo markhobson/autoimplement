@@ -40,13 +40,13 @@ public class Mutator
 	
 	private static final Set<BinaryExpr.Operator> OPERATORS = EnumSet.of(PLUS, MINUS, MULTIPLY, DIVIDE);
 	
-	private final ExpressionFactory expressionFactory;
+	private final OperandFactory operandFactory;
 	
 	private final Random random;
 	
-	public Mutator(ExpressionFactory expressionFactory, Random random)
+	public Mutator(OperandFactory operandFactory, Random random)
 	{
-		this.expressionFactory = expressionFactory;
+		this.operandFactory = operandFactory;
 		this.random = random;
 	}
 	
@@ -60,7 +60,7 @@ public class Mutator
 		return root;
 	}
 	
-	private Expression doMutate(Expression root)
+	Expression doMutate(Expression root)
 	{
 		switch (random.nextInt(3))
 		{
@@ -156,7 +156,7 @@ public class Mutator
 	
 	private Expression randomOperand()
 	{
-		return expressionFactory.get();
+		return operandFactory.get();
 	}
 	
 	private BinaryExpr randomOperator()

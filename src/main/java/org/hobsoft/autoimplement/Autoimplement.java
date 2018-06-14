@@ -59,9 +59,10 @@ public class Autoimplement<T>
 		expressionCompiler = new ExpressionCompiler<>();
 		testRunner = new TestRunner<>(implementationClass, testClass);
 		random = new Random();
-		expressionFactory = new ExpressionFactory(random);
-		mutator = new Mutator(expressionFactory, random);
+		OperandFactory operandFactory = new OperandFactory(random);
+		mutator = new Mutator(operandFactory, random);
 		crossover = new Crossover(random);
+		expressionFactory = new ExpressionFactory(operandFactory, mutator);
 	}
 	
 	public Optional<String> evolve(PrintStream log)

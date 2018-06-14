@@ -22,32 +22,37 @@ import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 
 /**
- * Creates random AST expressions.
+ * Creates random AST expression operands.
  */
-public class ExpressionFactory implements Supplier<Expression>
+public class OperandFactory implements Supplier<Expression>
 {
-	private static final int MUTATION_COUNT = 10;
+	private final Random random;
 	
-	private final OperandFactory operandFactory;
-	
-	private final Mutator mutator;
-	
-	public ExpressionFactory(OperandFactory operandFactory, Mutator mutator)
+	public OperandFactory(Random random)
 	{
-		this.operandFactory = operandFactory;
-		this.mutator = mutator;
+		this.random = random;
 	}
 	
 	@Override
 	public Expression get()
 	{
-		Expression expression = operandFactory.get();
-		
-		for (int iteration = 0; iteration < MUTATION_COUNT; iteration++)
-		{
-			expression = mutator.doMutate(expression);
-		}
-		
-		return expression;
+		return randomOperand();
+	}
+	
+	private Expression randomOperand()
+	{
+		return random.nextBoolean() ? randomLiteral() : randomName();
+	}
+	
+	private LiteralExpr randomLiteral()
+	{
+		int value = random.nextInt(10);
+		return new IntegerLiteralExpr(value);
+	}
+	
+	private Expression randomName()
+	{
+		String name = random.nextBoolean() ? "x" : "y";
+		return new NameExpr(name);
 	}
 }
