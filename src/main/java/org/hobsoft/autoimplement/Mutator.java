@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.BinaryExpr;
+import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
 
 import static org.hobsoft.autoimplement.Expressions.findRandomExpression;
@@ -38,7 +39,7 @@ public class Mutator
 {
 	private static final double MUTATION_RATE = 0.1;
 	
-	private static final Set<BinaryExpr.Operator> OPERATORS = EnumSet.of(PLUS, MINUS, MULTIPLY, DIVIDE);
+	private static final Set<Operator> OPERATORS = EnumSet.of(PLUS, MINUS, MULTIPLY, DIVIDE);
 	
 	private final OperandFactory operandFactory;
 	
